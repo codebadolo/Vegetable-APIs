@@ -42,7 +42,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'vendors',
-    'product'
+    'product',
+    'orders'
 
 ]
 
@@ -155,30 +156,10 @@ from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
 UNFOLD = {
     "SITE_TITLE": 'Symbiose Yaar',
+    "SITE_HEADER": 'Symbiose Yaar',
     "COLORS": {
         "primary": {
-            "50": "240 253 244",
-            "100": "220 252 231",
-            "200": "187 247 208",
-            "300": "134 239 172",
-            "400": "74 222 128",
-            "500": "34 197 94",   # Main green color
-            "600": "22 163 74",
-            "700": "21 128 61",
-            "800": "22 101 52",
-            "900": "20 83 45",
-        },
-        "secondary": {
-            "50": "250 250 250",
-            "100": "245 245 245",
-            "200": "235 235 235",
-            "300": "224 224 224",
-            "400": "189 189 189",
-            "500": "158 158 158",  # Neutral grey to complement green
-            "600": "117 117 117",
-            "700": "97 97 97",
-            "800": "66 66 66",
-            "900": "33 33 33",
+            "500": "34 197 94",    # Dominant green color
         },
     },
     "SIDEBAR": {
@@ -194,23 +175,45 @@ UNFOLD = {
                         "title": _("Products"),
                         "icon": "inventory",
                         "link": reverse_lazy("admin:product_product_changelist"),
-                      
+                   
                         "permission": lambda request: request.user.is_superuser,
                     },
                     {
                         "title": _("Categories"),
                         "icon": "category",
                         "link": reverse_lazy("admin:product_category_changelist"),
-               
+                       
                         "permission": lambda request: request.user.is_superuser,
                     },
                     {
-                        "title": _("Vendors"),
-                        "icon": "store",  # You can use any icon from https://fonts.google.com/icons
-                        "link": reverse_lazy("admin:vendors_vendor_changelist"),
-                    
+                        "title": _("Orders"),
+                        "icon": "shopping_cart",
+                        "link": reverse_lazy("admin:orders_order_changelist"),
+              
                         "permission": lambda request: request.user.is_superuser,
                     },
+                    
+                    {
+                        "title": _("Customers"),
+                        "icon": "person",
+                        "link": reverse_lazy("admin:orders_customer_changelist"),
+                      
+                        "permission": lambda request: request.user.is_superuser,
+                    },
+                    {
+                        "title": _("Cards"),
+                        "icon": "credit_card",
+                        "link": reverse_lazy("admin:orders_card_changelist"),
+                   
+                        "permission": lambda request: request.user.is_superuser,
+                    },
+                     {
+                    "title": _("Vendors"),
+                    "icon": "store",  # Icon for vendors
+                    "link": reverse_lazy("admin:vendors_vendor_changelist"),  # Change list for vendors
+          
+                    "permission": lambda request: request.user.is_superuser,
+                },
                 ],
             },
         ],
