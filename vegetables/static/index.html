@@ -1,0 +1,11 @@
+{% extends "admin/base.html" %}
+
+{% block sidebar %}
+  <div id="sidebar">
+    <ul>
+      <li><a href="{% url 'admin:product_product_changelist' %}">Manage Products</a></li>
+      <li><a href="{% url 'admin:product_category_changelist' %}">Manage Categories</a></li>
+      <li><a href="{% url 'admin:vendors_vendor_changelist' %}">Manage Vendors</a></li>
+    </ul>
+  </div>
+{% endblock %}

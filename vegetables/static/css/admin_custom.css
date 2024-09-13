@@ -1,0 +1,25 @@
+/* Sidebar Styling */
+#sidebar {
+    background-color: #34c759;  /* Green background */
+    padding: 10px;
+    border-radius: 5px;
+}
+
+#sidebar ul {
+    list-style: none;
+    padding: 0;
+}
+
+#sidebar ul li {
+    margin-bottom: 10px;
+}
+
+#sidebar ul li a {
+    color: white;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+#sidebar ul li a:hover {
+    color: #28a745;
+}

@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block title %}Vendor Login{% endblock %}
+
+{% block content %}
+<div class="login-container">
+    <div class="login-box">
+        <h2>Vendor Login</h2>
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="username">Username:</label>
+                {{ form.username }}
+            </div>
+            <div class="form-group">
+                <label for="password">Password:</label>
+                {{ form.password }}
+            </div>
+            <button type="submit" class="btn">Login</button>
+        </form>
+    </div>
+</div>
+{% endblock %}
