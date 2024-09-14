@@ -1,0 +1,202 @@
+{% extends "admin/base.html" %}
+
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vendor Dashboard</title>
+    {% load static %}
+<link rel="stylesheet" href="{% static 'css/style.css' %}">
+<script src="{% static 'js/script.js' %}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<style>
+    .card {
+        background-color: #fff;
+        border-radius: 10px;
+        padding: 20px;
+        margin: 10px;
+        text-align: center;
+        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease;
+    }
+    
+    .card:hover {
+        transform: scale(1.05); /* Slight zoom effect on hover */
+    }
+    
+    .card h3 {
+        font-size: 18px;
+        color: #333;
+        margin-bottom: 10px;
+    }
+    
+    .card p {
+        font-size: 32px;
+        font-weight: bold;
+        color: #111;
+    }
+    
+    .card .view-all {
+        font-size: 14px;
+        color: #007bff;
+        text-decoration: underline;
+        cursor: pointer;
+    }
+    
+    /* Specific card colors */
+    .card.total-customers {
+        background-color: #4CAF50; /* Green */
+        color: white;
+    }
+    
+    .card.total-revenue {
+        background-color: #FF9800; /* Orange */
+        color: white;
+    }
+    
+    .card.total-orders {
+        background-color: #2196F3; /* Blue */
+        color: white;
+    }
+    
+    .card.total-products {
+        background-color: #E91E63; /* Pink */
+        color: white;
+    }
+    
+    /* Align items properly */
+    .dashboard {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+    }
+    
+    .dashboard .chart-container {
+        width: 100%;
+        margin-top: 30px;
+    }
+    
+    .card {
+        margin: 20px 10px;
+    }
+    
+    .chart-container {
+        margin: 20px 10px;
+    }
+    
+    table {
+        margin-top: 30px;
+        width: 100%;
+        border-collapse: collapse;
+    }
+    
+    table th, table td {
+        padding: 10px;
+        text-align: center;
+    }
+    
+    table th {
+        background-color: #f1f1f1;
+        font-weight: bold;
+    }
+    
+
+</style>
+<body>
+
+    <header>
+        <h1>Welcome, {{ request.user.username }}</h1>
+    </header>
+
+    <div class="dashboard">
+        <div class="card total-customers">
+            <h3>Total Customers</h3>
+            <p>134</p>
+            <span class="view-all">view all</span>
+        </div>
+        <div class="card total-revenue">
+            <h3>Total Revenue</h3>
+            <p>$23,890</p>
+            <span class="view-all">view all</span>
+        </div>
+        <div class="card total-orders">
+            <h3>Total Orders</h3>
+            <p>54</p>
+            <span class="view-all">view all</span>
+        </div>
+        <div class="card total-products">
+            <h3>Total Products</h3>
+            <p>345</p>
+            <span class="view-all">view all</span>
+        </div>
+    </div>
+    
+    <div class="chart-container">
+        <h3>Sales Activity</h3>
+        <canvas id="salesChart"></canvas>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    var ctx = document.getElementById('salesChart').getContext('2d');
+    var salesChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep'],
+            datasets: [{
+                label: 'This Year Sales',
+                data: [120, 150, 100, 200, 170, 160, 180, 190, 220],
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 2,
+                pointBackgroundColor: 'rgba(255, 255, 255, 1)',
+                pointBorderColor: 'rgba(75, 192, 192, 1)',
+                pointHoverBackgroundColor: '#fff',
+                pointHoverBorderColor: 'rgba(75, 192, 192, 1)',
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        font: {
+                            size: 14,
+                            weight: 'bold',
+                        },
+                        color: '#111',
+                    }
+                },
+                x: {
+                    ticks: {
+                        font: {
+                            size: 14,
+                            weight: 'bold',
+                        },
+                        color: '#111',
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    display: true,
+                    labels: {
+                        font: {
+                            size: 14,
+                            weight: 'bold',
+                        },
+                        color: '#111',
+                    }
+                }
+            }
+        }
+    });
+    
+</script>
+
+</body>
+</html>
+{% endblock content %}

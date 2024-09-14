@@ -1,25 +1,17 @@
-/* Sidebar Styling */
-#sidebar {
-    background-color: #34c759;  /* Green background */
-    padding: 10px;
-    border-radius: 5px;
+/* Other UI elements */
+body {
+    background-color: white; /* White background */
+    color: #4B5563; /* Gray text */
 }
 
-#sidebar ul {
-    list-style: none;
-    padding: 0;
-}
-
-#sidebar ul li {
-    margin-bottom: 10px;
-}
-
-#sidebar ul li a {
+/* Buttons */
+button {
+    background-color: #22C55E; /* Primary green */
     color: white;
-    font-weight: bold;
-    text-decoration: none;
+    border: none;
 }
 
-#sidebar ul li a:hover {
-    color: #28a745;
+button:hover {
+    background-color: #16A34A; /* Darker green on hover */
 }
+

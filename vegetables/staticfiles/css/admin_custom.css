@@ -1,0 +1,17 @@
+
+/* Buttons */
+button {
+    background-color: #22C55E; /* Primary green */
+    color: white;
+    border: none;
+}
+
+button:hover {
+    background-color: #16A34A; /* Darker green on hover */
+}
+
+/* Other UI elements */
+body {
+    background-color: white; /* White background */
+    color: #4B5563; /* Gray text */
+}

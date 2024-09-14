@@ -42,9 +42,13 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'customers',
     'vendors',
     'product',
-    'orders'
+    'orders',
+    'rest_framework.authtoken',
+    
+
 
 ]
 
@@ -63,7 +67,7 @@ ROOT_URLCONF = 'vegetables.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'templates')],
+        'DIRS': [os.path.join(BASE_DIR, 'templates') ,'unfold'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -125,12 +129,16 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
-STATIC_URL = '/static/'
-
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static'),  # Path to the static directory
+    BASE_DIR / 'static',  # Adjust this to match the structure of your static directory
 ]
 
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',  # Default authentication backend
+]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
@@ -147,6 +155,7 @@ REST_FRAMEWORK = {
     ],
 }
 
+
 from django.templatetags.static import static
 from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
@@ -155,31 +164,53 @@ UNFOLD = {
     "SITE_TITLE": "Symbiose Yaar Admin",
     "SITE_HEADER": "Symbiose Yaar",
     "SITE_URL": "/",
-    "SITE_ICON": {
-        "light": lambda request: static("icon-light.svg"),
-        "dark": lambda request: static("icon-dark.svg"),
-    },
+    "SITE_ICON": lambda request: static("/LOGO-SYMBIOSE-YAAR_1.png"),
+    "SITE_FAVICONS": [
+        {
+            "rel": "icon",
+            "sizes": "32x32",
+            "type": "image/png",
+            "href": lambda request: static("/LOGO-SYMBIOSE-YAAR_1.png"),  # Path to your favicon
+        },
+    ],
     "SITE_LOGO": {
-        "light": lambda request: static("logo-light.svg"),
-        "dark": lambda request: static("logo-dark.svg"),
+         "sizes": "32x32",
+        "light": lambda request: static("/LOGO-SYMBIOSE-YAAR_1.png"),
+        "dark": lambda request: static("/LOGO-SYMBIOSE-YAAR_1.png"),
     },
     "SHOW_HISTORY": True,
     "SHOW_VIEW_ON_SITE": True,
     "THEME": "light",  # You can force "dark" mode by changing this value
     "LOGIN": {
-        "image": lambda request: static("sample/login-bg.jpg"),
+        "image": lambda request: static("/LOGO-SYMBIOSE-YAAR_1.png"),
         "redirect_after": lambda request: reverse_lazy("admin:product_product_changelist"),
     },
     "STYLES": [
         lambda request: static("css/style.css"),
     ],
-    "COLORS": {
-        "font": {
-            "subtle-light": "107 114 128",
-            "subtle-dark": "156 163 175",
-        },
+       "COLORS": {
         "primary": {
-            "500": "34 197 94",  # Your primary color (adjust this to your branding)
+            "50": "240 253 244",  # Lighter green shade
+            "100": "220 252 231",
+            "200": "187 247 208",
+            "300": "134 239 172",
+            "400": "74 222 128",
+            "500": "34 197 94",  # Main green
+            "600": "22 163 74",
+            "700": "21 128 61",
+            "800": "22 101 52",
+            "900": "20 83 45",
+            "950": "14 59 34",   # Darkest green
+        },
+        "background": {
+            "light": "255 255 255",  # White background in light mode
+            "dark": "0 0 0",         # Optionally, black for dark mode
+        },
+        "font": {
+            "default-light": "75 85 99",    # Gray font for light mode
+            "default-dark": "209 213 219",  # Lighter gray font for dark mode
+            "important-light": "0 128 0",   # Dark green for important text
+            "important-dark": "255 255 255",  # White for important text in dark mode
         },
     },
     "EXTENSIONS": {
@@ -230,6 +261,13 @@ UNFOLD = {
                 "separator": True,
                 "collapsible": True,
                 "items": [
+                     {
+                        "title": _("dash"),
+                        "icon": "dashboard",
+                        "link": reverse_lazy('vendor_dashboard'),
+                        "permission": lambda request: request.user.groups.filter(name="Vendor").exists(),  # Vendor only
+                    },
+                    
                     {
                         "title": _("My Products"),
                         "icon": "inventory",
@@ -252,6 +290,9 @@ UNFOLD = {
             },
         ],
     },
+     "STYLES": [
+        lambda request: static("css/admin_custom.css"),
+    ],
     "TABS": [
         {
             "models": ["product.product", "product.category"],
@@ -264,4 +305,7 @@ UNFOLD = {
             ],
         },
     ],
+
 }
+
+

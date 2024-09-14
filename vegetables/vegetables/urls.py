@@ -9,6 +9,7 @@ urlpatterns = [
    #path('grappelli/', include('grappelli.urls')),  # Grappelli URLS
    path('api/', include('vendors.urls')),  # This links the vendor app URLs under the 'api/' path
    path('orders/', include('orders.urls')), 
+   path('api/customers/', include('customers.urls')),
 
     # Add other app URLs here, e.g.:
 
@@ -17,4 +18,5 @@ urlpatterns = [
 if settings.DEBUG:
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
-
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
