@@ -8,6 +8,7 @@ from .models import Category
 from unfold.admin import ModelAdmin
 from unfold.admin import TabularInline 
 from vendors.models  import Vendor
+from product.forms import ProductForm
 class CategoryAdmin(ModelAdmin , MPTTModelAdmin):
     list_display = ('name', 'parent')
     search_fields = ('name',)
@@ -18,15 +19,18 @@ class CategoryAdmin(ModelAdmin , MPTTModelAdmin):
 class ProductImageInline(TabularInline):
     model = ProductImage
     extra = 1  # Show one empty form for adding images
+    fields = ['image']  # Display the image field only
+
 
 # Inline admin for managing product variants within the product admin
 class ProductVariantInline(TabularInline):
     model = ProductVariant
     extra = 1  # Show one empty form for adding variants
-
+    fields = ['name', 'price', 'stock']  # Display these fields for variants
 class ProductAdmin(ModelAdmin):
+    #orm = ProductForm
     model = Product
-    list_display = ('name', 'vendor', 'price', 'stock', 'category')
+    list_display = ('name', 'vendor', 'price', 'stock', 'category' )
     search_fields = ('name', 'vendor__store_name')
     list_filter = ('vendor', 'category')
 
