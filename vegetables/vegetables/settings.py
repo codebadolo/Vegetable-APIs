@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 from pathlib import Path
 import os 
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -146,28 +147,55 @@ REST_FRAMEWORK = {
     ],
 }
 
-
 from django.templatetags.static import static
 from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
 
-from django.templatetags.static import static
-from django.urls import reverse_lazy
-from django.utils.translation import gettext_lazy as _
 UNFOLD = {
-    "SITE_TITLE": 'Symbiose Yaar',
-    "SITE_HEADER": 'Symbiose Yaar',
+    "SITE_TITLE": "Symbiose Yaar Admin",
+    "SITE_HEADER": "Symbiose Yaar",
+    "SITE_URL": "/",
+    "SITE_ICON": {
+        "light": lambda request: static("icon-light.svg"),
+        "dark": lambda request: static("icon-dark.svg"),
+    },
+    "SITE_LOGO": {
+        "light": lambda request: static("logo-light.svg"),
+        "dark": lambda request: static("logo-dark.svg"),
+    },
+    "SHOW_HISTORY": True,
+    "SHOW_VIEW_ON_SITE": True,
+    "THEME": "light",  # You can force "dark" mode by changing this value
+    "LOGIN": {
+        "image": lambda request: static("sample/login-bg.jpg"),
+        "redirect_after": lambda request: reverse_lazy("admin:product_product_changelist"),
+    },
+    "STYLES": [
+        lambda request: static("css/style.css"),
+    ],
     "COLORS": {
+        "font": {
+            "subtle-light": "107 114 128",
+            "subtle-dark": "156 163 175",
+        },
         "primary": {
-            "500": "34 197 94",    # Dominant green color
+            "500": "34 197 94",  # Your primary color (adjust this to your branding)
+        },
+    },
+    "EXTENSIONS": {
+        "modeltranslation": {
+            "flags": {
+                "en": "🇬🇧",
+                "fr": "🇫🇷",
+            },
         },
     },
     "SIDEBAR": {
         "show_search": True,
-        "show_all_applications": True,
+        "show_all_applications": False,
         "navigation": [
             {
-                "title": _("Symbiose Yaar Management"),
+                "title": _("Admin Management"),
                 "separator": True,
                 "collapsible": True,
                 "items": [
@@ -175,47 +203,65 @@ UNFOLD = {
                         "title": _("Products"),
                         "icon": "inventory",
                         "link": reverse_lazy("admin:product_product_changelist"),
-                   
-                        "permission": lambda request: request.user.is_superuser,
+                        "permission": lambda request: request.user.is_superuser,  # Admin only
                     },
                     {
                         "title": _("Categories"),
                         "icon": "category",
                         "link": reverse_lazy("admin:product_category_changelist"),
-                       
-                        "permission": lambda request: request.user.is_superuser,
+                        "permission": lambda request: request.user.is_superuser,  # Admin only
                     },
                     {
                         "title": _("Orders"),
                         "icon": "shopping_cart",
                         "link": reverse_lazy("admin:orders_order_changelist"),
-              
-                        "permission": lambda request: request.user.is_superuser,
-                    },
-                    
-                    {
-                        "title": _("Customers"),
-                        "icon": "person",
-                        "link": reverse_lazy("admin:orders_customer_changelist"),
-                      
-                        "permission": lambda request: request.user.is_superuser,
+                        "permission": lambda request: request.user.is_superuser,  # Admin only
                     },
                     {
-                        "title": _("Cards"),
-                        "icon": "credit_card",
-                        "link": reverse_lazy("admin:orders_card_changelist"),
-                   
-                        "permission": lambda request: request.user.is_superuser,
+                        "title": _("Users"),
+                        "icon": "people",
+                        "link": reverse_lazy("admin:auth_user_changelist"),
+                        "permission": lambda request: request.user.is_superuser,  # Admin only
                     },
-                     {
-                    "title": _("Vendors"),
-                    "icon": "store",  # Icon for vendors
-                    "link": reverse_lazy("admin:vendors_vendor_changelist"),  # Change list for vendors
-          
-                    "permission": lambda request: request.user.is_superuser,
-                },
+                ],
+            },
+            {
+                "title": _("Vendor Management"),
+                "separator": True,
+                "collapsible": True,
+                "items": [
+                    {
+                        "title": _("My Products"),
+                        "icon": "inventory",
+                        "link": reverse_lazy("admin:product_product_changelist"),
+                        "permission": lambda request: request.user.groups.filter(name="Vendor").exists(),  # Vendor only
+                    },
+                    {
+                        "title": _("My Orders"),
+                        "icon": "shopping_cart",
+                        "link": reverse_lazy("admin:orders_order_changelist"),
+                        "permission": lambda request: request.user.groups.filter(name="Vendor").exists(),  # Vendor only
+                    },
+                    {
+                        "title": _("My Categories"),
+                        "icon": "category",
+                        "link": reverse_lazy("admin:product_category_changelist"),
+                        "permission": lambda request: request.user.groups.filter(name="Vendor").exists(),  # Vendor only
+                    },
                 ],
             },
         ],
     },
+    "TABS": [
+        {
+            "models": ["product.product", "product.category"],
+            "items": [
+                {
+                    "title": _("Your custom tab"),
+                    "link": reverse_lazy("admin:product_product_changelist"),
+                    "permission": lambda request: request.user.is_superuser,
+                },
+            ],
+        },
+    ],
 }

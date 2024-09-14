@@ -5,36 +5,34 @@ from .forms import ProductForm
 from django.contrib import admin
 from mptt.admin import MPTTModelAdmin
 from .models import Category
-
-class CategoryAdmin(MPTTModelAdmin):
+from unfold.admin import ModelAdmin
+from unfold.admin import TabularInline 
+from vendors.models  import Vendor
+class CategoryAdmin(ModelAdmin , MPTTModelAdmin):
     list_display = ('name', 'parent')
     search_fields = ('name',)
     mptt_level_indent = 20  # Set indentation for subcategories
 
 
 # Inline admin for managing product images within the product admin
-class ProductImageInline(admin.TabularInline):
+class ProductImageInline(TabularInline):
     model = ProductImage
     extra = 1  # Show one empty form for adding images
 
 # Inline admin for managing product variants within the product admin
-class ProductVariantInline(admin.TabularInline):
+class ProductVariantInline(TabularInline):
     model = ProductVariant
     extra = 1  # Show one empty form for adding variants
 
-# Product admin with inlines for managing images and variants
-class ProductAdmin(admin.ModelAdmin):
-
-    form = ProductForm
-    list_display = ('name', 'price', 'stock', 'category')
-    search_fields = ('name',)
+class ProductAdmin(ModelAdmin):
+    model = Product
     list_display = ('name', 'vendor', 'price', 'stock', 'category')
+    search_fields = ('name', 'vendor__store_name')
     list_filter = ('vendor', 'category')
-    search_fields = ('name', 'vendor__store_name')# Organize the form into fieldsets
-    class Media:
-        css = {
-            'all': ('css/admin_custom.css',)
-        }
+
+    # Add inlines for images and variants
+    inlines = [ProductImageInline, ProductVariantInline]
+
     fieldsets = (
         (None, {
             'fields': ('name', 'description')
@@ -46,15 +44,22 @@ class ProductAdmin(admin.ModelAdmin):
             'fields': ('category',)
         }),
     )
-    inlines = [ProductImageInline, ProductVariantInline]  # Add inlines for images and variants
-        # Override the queryset to filter products based on the logged-in vendor
+
     def get_queryset(self, request):
         qs = super().get_queryset(request)
-        if request.user.is_superuser:
-            return qs  # Superusers can see all products
-        else:
-            # Filter the products to show only those of the current vendor
-            return qs.filter(vendor__email=request.user.email)
+        if request.user.groups.filter(name='Vendor').exists():
+            return qs.filter(vendor__user=request.user)
+        return qs
+
+    def save_model(self, request, obj, form, change):
+        if not request.user.is_superuser:
+            try:
+                vendor = Vendor.objects.get(user=request.user)
+                obj.vendor = vendor
+            except Vendor.DoesNotExist:
+                raise ValidationError("You are not associated with any vendor account.")
+        super().save_model(request, obj, form, change)
+
 
 
 # Ensure that the custom CSS is applied to all admin models globally

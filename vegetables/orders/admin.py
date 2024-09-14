@@ -2,9 +2,10 @@ from .models import Order
 
 from django.contrib import admin
 from .models import Customer, Order, OrderItem, Card
+from unfold.admin import ModelAdmin
 
 # Registering the Customer model in Admin
-class CustomerAdmin(admin.ModelAdmin):
+class CustomerAdmin(ModelAdmin):
     list_display = ('user', 'address', 'phone')
     search_fields = ('user__username', 'address', 'phone')
 
@@ -28,8 +29,10 @@ class OrderAdmin(admin.ModelAdmin):
     list_display = ('customer', 'vendor', 'total_price', 'status')
     list_filter = ('status',)
     search_fields = ('customer__user__username', 'vendor__name')
-
-    def has_view_permission(self, request, obj=None):
-        return request.user.is_superuser or request.user.has_perm('yourapp.view_order')
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        if request.user.groups.filter(name='Vendor').exists():
+            return qs.filter(vendor__user=request.user)
+        return qs
 
 admin.site.register(Order, OrderAdmin)

@@ -19,7 +19,7 @@ class Product(models.Model):
     stock = models.PositiveIntegerField()
     category = TreeForeignKey(Category, on_delete=models.SET_NULL, null=True, blank=True)
     vendor = models.ForeignKey(Vendor, on_delete=models.CASCADE)  # Linked to the Vendor model in the vendor app
-
+    
     def __str__(self):
         return self.name
 
