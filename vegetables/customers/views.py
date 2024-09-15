@@ -1,8 +1,3 @@
-from rest_framework import generics
-from django.contrib.auth.models import User
-from .serializers import CustomerSignupSerializer
-from rest_framework import generics
-from django.contrib.auth.models import User
 from rest_framework.permissions import AllowAny
 from .serializers import CustomerSignupSerializer
 from rest_framework.authtoken.views import ObtainAuthToken
@@ -13,9 +8,7 @@ from orders.models  import Customer
 from rest_framework.permissions import IsAuthenticated
 from .serializers import CustomerProfileSerializer
 from rest_framework import status
-
 from rest_framework.views import APIView
-from rest_framework.permissions import IsAuthenticated
 from django.contrib.auth.models import User
 from .serializers import ChangePasswordSerializer
 
@@ -43,7 +36,6 @@ class CustomerProfileView(generics.RetrieveUpdateAPIView):
 
     def get_object(self):
         return Customer.objects.get(user=self.request.user)
-
 
 class ChangePasswordView(APIView):
     permission_classes = [IsAuthenticated]

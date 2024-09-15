@@ -1,31 +1,23 @@
-from .models import Order
-
 from django.contrib import admin
 from .models import Customer, Order, OrderItem, Card
 from unfold.admin import ModelAdmin , TabularInline
 from vendors.models import Vendor
-# Registering the Customer model in Admin
-# customers/admin.py
-from django.contrib import admin
-from .models import Customer
 from django.utils.html import format_html
+
 @admin.register(Customer)
-class CustomerAdmin(admin.ModelAdmin):
+class CustomerAdmin(ModelAdmin):
     list_display = ('user', 'address', 'phone')  # Ensure these fields exist in your model
     search_fields = ('user__username', 'phone')  # Assuming 'user' is a ForeignKey to 'auth.User'
     list_filter = ('user__is_active', 'user__date_joined')
 
-
-
-# Registering the Order model in Admin
 class OrderItemInline(TabularInline):
     model = OrderItem
     extra = 0 # Allows adding extra order items
     # Custom method to show product name and image
     def product_name(self, obj):
         return obj.product.name
-
-      # Show product image
+    
+    # Show product image
     def product_image(self, obj):
         if obj.product.images.exists():
             return format_html('<img src="{}" width="50" height="50" />', obj.product.images.first().image.url)
@@ -40,17 +32,15 @@ class OrderItemInline(TabularInline):
     product_image.short_description = 'Product Image'
 
 # Registering the Card model in Admin
-class CardAdmin(admin.ModelAdmin):
+class CardAdmin(ModelAdmin):
     list_display = ('customer', 'card_number', 'expiry_date')
     search_fields = ('customer__user__username', 'card_number')
 
-admin.site.register(Card, CardAdmin)
-
-
-class OrderAdmin(admin.ModelAdmin):
+class OrderAdmin(ModelAdmin):
     list_display = ('id', 'customer', 'vendor', 'status', 'total_price', 'created_at', 'get_product_image')
     search_fields = ('customer__user__username', 'vendor__store_name')
     list_filter = ('status', 'created_at')
+    readonly_fields = ('total_price', 'status', 'created_at')
     inlines = [OrderItemInline]  # Show Order Items in the Order
     def get_queryset(self, request):
         """
@@ -88,5 +78,16 @@ class OrderAdmin(admin.ModelAdmin):
     
         get_product_image.short_description = 'Product Image'
 
+        def total_order_items(self, obj):
+            return obj.items.count()
+
+        def total_quantity(self, obj):
+            return sum(item.quantity for item in obj.items.all())
+        
+        total_order_items.short_description = 'Total Items'
+        total_quantity.short_description = 'Total Quantity'
+        
+
 admin.site.register(Order, OrderAdmin)
 admin.site.register(OrderItem)
+admin.site.register(Card, CardAdmin)

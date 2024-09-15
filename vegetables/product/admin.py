@@ -5,8 +5,7 @@ from .forms import ProductForm
 from django.contrib import admin
 from mptt.admin import MPTTModelAdmin
 from .models import Category
-from unfold.admin import ModelAdmin
-from unfold.admin import TabularInline 
+from unfold.admin import ModelAdmin ,TabularInline
 from vendors.models  import Vendor
 from product.forms import ProductForm
 from django.utils.html import format_html
@@ -14,7 +13,6 @@ class CategoryAdmin(ModelAdmin , MPTTModelAdmin):
     list_display = ('name', 'parent')
     search_fields = ('name',)
     mptt_level_indent = 20  # Set indentation for subcategories
-
 
 # Inline admin for managing product images within the product admin
 class ProductImageInline(TabularInline):
@@ -79,10 +77,6 @@ class ProductAdmin(ModelAdmin):
             except Vendor.DoesNotExist:
                 raise ValidationError("You are not associated with any vendor account.")
         super().save_model(request, obj, form, change)
-
-
-
-# Ensure that the custom CSS is applied to all admin models globally
 
 
 # Register the models

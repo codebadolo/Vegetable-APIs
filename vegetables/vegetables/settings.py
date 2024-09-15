@@ -182,7 +182,7 @@ UNFOLD = {
     "SHOW_VIEW_ON_SITE": True,
     "THEME": "light",  # You can force "dark" mode by changing this value
     "LOGIN": {
-        "image": lambda request: static("/LOGO-SYMBIOSE-YAAR_1.png"),
+        #"image": lambda request: static("/LOGO-SYMBIOSE-YAAR_1.png"),
         "redirect_after": lambda request: reverse_lazy("admin:product_product_changelist"),
     },
     "STYLES": [
@@ -262,7 +262,7 @@ UNFOLD = {
                 "collapsible": True,
                 "items": [
                      {
-                        "title": _("dash"),
+                        "title": _("DashBoard"),
                         "icon": "dashboard",
                         "link": reverse_lazy('vendor_dashboard'),
                         "permission": lambda request: request.user.groups.filter(name="Vendor").exists(),  # Vendor only
