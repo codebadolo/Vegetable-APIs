@@ -1,0 +1,25 @@
+{% extends "unfold/layouts/base.html" %}
+
+{% block content %}
+  <div class="wishlist-container">
+      <h1>Wishlist Items</h1>
+      <table class="table">
+          <thead>
+              <tr>
+                  <th>Product</th>
+                  <th>Customer</th>
+                  <th>Added Date</th>
+              </tr>
+          </thead>
+          <tbody>
+              {% for item in object_list %}
+              <tr>
+                  <td>{{ item.product.name }}</td>
+                  <td>{{ item.customer.user.username }}</td>
+                  <td>{{ item.added_at }}</td>
+              </tr>
+              {% endfor %}
+          </tbody>
+      </table>
+  </div>
+{% endblock %}

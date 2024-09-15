@@ -170,47 +170,46 @@ UNFOLD = {
             "rel": "icon",
             "sizes": "32x32",
             "type": "image/png",
-            "href": lambda request: static("/LOGO-SYMBIOSE-YAAR_1.png"),  # Path to your favicon
+            "href": lambda request: static("/LOGO-SYMBIOSE-YAAR_1.png"),
         },
     ],
     "SITE_LOGO": {
-         "sizes": "32x32",
+        "sizes": "32x32",
         "light": lambda request: static("/LOGO-SYMBIOSE-YAAR_1.png"),
         "dark": lambda request: static("/LOGO-SYMBIOSE-YAAR_1.png"),
     },
     "SHOW_HISTORY": True,
     "SHOW_VIEW_ON_SITE": True,
-    "THEME": "light",  # You can force "dark" mode by changing this value
+    "THEME": "light",
     "LOGIN": {
-        #"image": lambda request: static("/LOGO-SYMBIOSE-YAAR_1.png"),
         "redirect_after": lambda request: reverse_lazy("admin:product_product_changelist"),
     },
     "STYLES": [
-        lambda request: static("css/style.css"),
+        lambda request: static("css/admin_custom.css"),
     ],
-       "COLORS": {
+    "COLORS": {
         "primary": {
-            "50": "240 253 244",  # Lighter green shade
+            "50": "240 253 244",
             "100": "220 252 231",
             "200": "187 247 208",
             "300": "134 239 172",
             "400": "74 222 128",
-            "500": "34 197 94",  # Main green
+            "500": "34 197 94",
             "600": "22 163 74",
             "700": "21 128 61",
             "800": "22 101 52",
             "900": "20 83 45",
-            "950": "14 59 34",   # Darkest green
+            "950": "14 59 34",
         },
         "background": {
-            "light": "255 255 255",  # White background in light mode
-            "dark": "0 0 0",         # Optionally, black for dark mode
+            "light": "255 255 255",
+            "dark": "0 0 0",
         },
         "font": {
-            "default-light": "75 85 99",    # Gray font for light mode
-            "default-dark": "209 213 219",  # Lighter gray font for dark mode
-            "important-light": "0 128 0",   # Dark green for important text
-            "important-dark": "255 255 255",  # White for important text in dark mode
+            "default-light": "75 85 99",
+            "default-dark": "209 213 219",
+            "important-light": "0 128 0",
+            "important-dark": "255 255 255",
         },
     },
     "EXTENSIONS": {
@@ -249,6 +248,12 @@ UNFOLD = {
                         "permission": lambda request: request.user.is_superuser,  # Admin only
                     },
                     {
+                        "title": _("Customers"),
+                        "icon": "people",
+                        "link": reverse_lazy("admin:orders_customer_changelist"),
+                        "permission": lambda request: request.user.is_superuser,  # Admin only
+                    },
+                    {
                         "title": _("Users"),
                         "icon": "people",
                         "link": reverse_lazy("admin:auth_user_changelist"),
@@ -257,55 +262,90 @@ UNFOLD = {
                 ],
             },
             {
-                "title": _("Vendor Management"),
-                "separator": True,
+                "title": _("Marketing"),
                 "collapsible": True,
                 "items": [
-                     {
+                    {
+                        "title": _("Coupons"),
+                        "icon": "local_offer",
+                        "link": reverse_lazy("admin:orders_coupon_changelist"),
+                        "permission": lambda request: request.user.is_superuser,  # Admin only
+                    },
+                    {
+                        "title": _("Promotions"),
+                        "icon": "campaign",
+                        "link": reverse_lazy("admin:orders_promotion_changelist"),
+                        "permission": lambda request: request.user.is_superuser,  # Admin only
+                    },
+                    {
+                        "title": _("Wishlist"),
+                        "icon": "favorite",
+                        "link": reverse_lazy("admin:orders_wishlist_changelist"),
+                        "permission": lambda request: request.user.is_superuser,  # Admin only
+                    },
+                ],
+            },
+            {
+                "title": _("Vendor Management"),
+                "separator": True,
+                "collapsible": False,
+                "items": [
+                    {
                         "title": _("DashBoard"),
                         "icon": "dashboard",
                         "link": reverse_lazy('vendor_dashboard'),
-                        "permission": lambda request: request.user.groups.filter(name="Vendor").exists(),  # Vendor only
+                        "permission": lambda request: request.user.groups.filter(name="Vendor").exists(),
                     },
-                    
                     {
                         "title": _("My Products"),
                         "icon": "inventory",
                         "link": reverse_lazy("admin:product_product_changelist"),
-                        "permission": lambda request: request.user.groups.filter(name="Vendor").exists(),  # Vendor only
-                    },
-                    {
-                        "title": _("My Orders"),
-                        "icon": "shopping_cart",
-                        "link": reverse_lazy("admin:orders_order_changelist"),
-                        "permission": lambda request: request.user.groups.filter(name="Vendor").exists(),  # Vendor only
+                        "permission": lambda request: request.user.groups.filter(name="Vendor").exists(),
                     },
                     {
                         "title": _("My Categories"),
                         "icon": "category",
                         "link": reverse_lazy("admin:product_category_changelist"),
-                        "permission": lambda request: request.user.groups.filter(name="Vendor").exists(),  # Vendor only
+                        "permission": lambda request: request.user.groups.filter(name="Vendor").exists(),
+                    },
+                    {
+                        "title": _("My Orders"),
+                        "icon": "shopping_cart",
+                        "link": reverse_lazy("admin:orders_order_changelist"),
+                        "permission": lambda request: request.user.groups.filter(name="Vendor").exists(),
+                    },
+                    {
+                        "title": _("My Customers"),
+                        "icon": "people",
+                        "link": reverse_lazy("admin:orders_customer_changelist"),
+                        "permission": lambda request: request.user.groups.filter(name="Vendor").exists(),
+                    },
+                    {
+                        "title": _("My Wishlist"),
+                        "icon": "favorite",
+                        "link": reverse_lazy("admin:orders_wishlist_changelist"),
+                        "permission": lambda request: request.user.groups.filter(name="Vendor").exists(),
+                    },
+                    {
+                        "title": _("My Coupons"),
+                        "icon": "local_offer",
+                        "link": reverse_lazy("admin:orders_coupon_changelist"),
+                        "permission": lambda request: request.user.groups.filter(name="Vendor").exists(),
+                    },
+                    {
+                        "title": _("My Promotions"),
+                        "icon": "campaign",
+                        "link": reverse_lazy("admin:orders_promotion_changelist"),
+                        "permission": lambda request: request.user.groups.filter(name="Vendor").exists(),
+                    },
+                    {
+                        "title": _("My Transactions"),
+                        "icon": "monetization_on",
+                        "link": reverse_lazy("admin:orders_transaction_changelist"),
+                        "permission": lambda request: request.user.groups.filter(name="Vendor").exists(),
                     },
                 ],
             },
         ],
     },
-     "STYLES": [
-        lambda request: static("css/admin_custom.css"),
-    ],
-    "TABS": [
-        {
-            "models": ["product.product", "product.category"],
-            "items": [
-                {
-                    "title": _("Your custom tab"),
-                    "link": reverse_lazy("admin:product_product_changelist"),
-                    "permission": lambda request: request.user.is_superuser,
-                },
-            ],
-        },
-    ],
-
 }
-
-

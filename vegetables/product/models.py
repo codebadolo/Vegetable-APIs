@@ -22,6 +22,12 @@ class Product(models.Model):
     
     def __str__(self):
         return self.name
+    
+    def get_price(self):
+        active_promotion = Promotion.objects.filter(product=self, start_date__lte=timezone.now(), end_date__gte=timezone.now()).first()
+        if active_promotion:
+            return self.price * (1 - (active_promotion.discount_percentage / 100))
+        return self.price
 
 class ProductImage(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='images')

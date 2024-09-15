@@ -1,0 +1,27 @@
+{% extends "unfold/layouts/base.html" %}
+
+{% block content %}
+  <div class="transactions-container">
+      <h1>My Transactions</h1>
+      <table class="table">
+          <thead>
+              <tr>
+                  <th>Transaction ID</th>
+                  <th>Order</th>
+                  <th>Amount</th>
+                  <th>Date</th>
+              </tr>
+          </thead>
+          <tbody>
+              {% for transaction in object_list %}
+              <tr>
+                  <td>{{ transaction.id }}</td>
+                  <td>{{ transaction.order.id }}</td>
+                  <td>{{ transaction.amount }}</td>
+                  <td>{{ transaction.created_at }}</td>
+              </tr>
+              {% endfor %}
+          </tbody>
+      </table>
+  </div>
+{% endblock %}

@@ -1,0 +1,29 @@
+{% extends "unfold/layouts/base.html" %}
+
+{% block content %}
+  <div class="orders-container">
+      <h1>My Orders</h1>
+      <table class="table">
+          <thead>
+              <tr>
+                  <th>Order ID</th>
+                  <th>Customer</th>
+                  <th>Total Price</th>
+                  <th>Status</th>
+                  <th>Date</th>
+              </tr>
+          </thead>
+          <tbody>
+              {% for order in object_list %}
+              <tr>
+                  <td>{{ order.id }}</td>
+                  <td>{{ order.customer.user.username }}</td>
+                  <td>{{ order.total_price }}</td>
+                  <td>{{ order.status }}</td>
+                  <td>{{ order.created_at }}</td>
+              </tr>
+              {% endfor %}
+          </tbody>
+      </table>
+  </div>
+{% endblock %}
