@@ -14,6 +14,7 @@ class Customer(models.Model):
         return f'{self.user.username} - {self.phone_number}'
 
 class Coupon(models.Model):
+    vendor = models.ForeignKey(Vendor, on_delete=models.CASCADE, null=True, blank=True)  # Add this line to link Coupon to Vendor
     code = models.CharField(max_length=50, unique=True)
     discount = models.DecimalField(max_digits=5, decimal_places=2)  # E.g., 10 for 10% or 10.00 for 10 units off
     active = models.BooleanField(default=True)

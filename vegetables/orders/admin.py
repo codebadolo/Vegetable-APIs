@@ -116,6 +116,13 @@ admin.site.register(Order, OrderAdmin)
 class CardAdmin(ModelAdmin):
     list_display = ('customer', 'card_number', 'expiry_date')
     search_fields = ('customer__user__username', 'card_number')
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        # If the user is a vendor, only show cards of customers who have purchased from them
+        if request.user.groups.filter(name="Vendor").exists():
+            return qs.filter(customer__order__vendor__user=request.user).distinct()
+        # If the user is a superuser, show all cards
+        return qs
 
 admin.site.register(Card, CardAdmin)
 
@@ -126,6 +133,22 @@ class CouponAdmin(ModelAdmin):
     list_display = ('code', 'discount', 'active', 'start_date', 'end_date')
     search_fields = ('code',)
     list_filter = ('active', 'start_date', 'end_date')
+    readonly_fields = ('vendor' ,)
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        # If the user is a vendor, only show their own coupons
+        if request.user.groups.filter(name="Vendor").exists():
+            return qs.filter(vendor__user=request.user)
+        # If the user is a superuser, show all coupons
+        return qs
+
+    def save_model(self, request, obj, form, change):
+        """
+        Automatically assign the vendor when creating a coupon.
+        """
+        if not request.user.is_superuser:
+            obj.vendor = request.user.vendor  # Assuming the Vendor model has a one-to-one relationship with User
+        super().save_model(request, obj, form, change)
 
 
 # Transaction Admin
@@ -135,7 +158,13 @@ class TransactionAdmin(ModelAdmin):
     search_fields = ('transaction_id', 'order__id')
     list_filter = ('status', 'created_at')
 
-
+    def get_queryset(self, request):
+            qs = super().get_queryset(request)
+            # If the user is a vendor, only show transactions related to their products/orders
+            if request.user.groups.filter(name="Vendor").exists():
+                return qs.filter(order__vendor__user=request.user)
+            # If the user is a superuser, show all transactions
+            return qs
 # Wishlist Admin
 @admin.register(Wishlist)
 class WishlistAdmin(admin.ModelAdmin):
