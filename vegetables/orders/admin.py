@@ -20,7 +20,7 @@ class CustomerAdmin(ModelAdmin):
 
 admin.site.register(Customer, CustomerAdmin)
 
-class OrderItemInline(admin.TabularInline):
+class OrderItemInline(TabularInline):
     model = OrderItem
     extra = 0
     readonly_fields = ('product', 'quantity', 'price', 'product_image')
@@ -31,7 +31,7 @@ class OrderItemInline(admin.TabularInline):
         return 'No Image'
     product_image.short_description = 'Product Image'
 
-class OrderAdmin(admin.ModelAdmin):
+class OrderAdmin(ModelAdmin):
     list_display = ('id', 'customer', 'vendor', 'status', 'total_price', 'created_at')
     readonly_fields = ('total_price', 'created_at', 'customer_details', 'vendor_details', 'order_items')
     list_filter = ('status', 'created_at')
@@ -167,7 +167,7 @@ class TransactionAdmin(ModelAdmin):
             return qs
 # Wishlist Admin
 @admin.register(Wishlist)
-class WishlistAdmin(admin.ModelAdmin):
+class WishlistAdmin(ModelAdmin):
     list_display = ('user', 'display_products')
 
     def display_products(self, obj):
@@ -181,7 +181,7 @@ class WishlistAdmin(admin.ModelAdmin):
 
 
 # Promotion Admin
-class PromotionAdmin(admin.ModelAdmin):
+class PromotionAdmin(ModelAdmin):
     list_display = ('name', 'discount', 'start_date', 'end_date', 'active')
     list_filter = ('active', 'start_date', 'end_date')
     search_fields = ('name',)
