@@ -67,7 +67,7 @@ ROOT_URLCONF = 'vegetables.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'templates') ,'unfold'],
+        'DIRS': [os.path.join(BASE_DIR, 'templates') ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -224,6 +224,19 @@ UNFOLD = {
         "show_search": True,
         "show_all_applications": False,
         "navigation": [
+           {
+                "title": "Custom Pages",
+                "separator": True,
+                "collapsible": True,
+                "items": [
+                    {
+                        "title": "Custom Admin Page",
+                        "icon": "dashboard",
+                       "link": reverse_lazy("admin_dashboard"),
+                        "permission": lambda request: request.user.is_superuser,
+                    },
+                ],
+            },
             {
                 "title": _("Admin Management"),
                 "separator": True,

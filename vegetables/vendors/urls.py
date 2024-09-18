@@ -4,6 +4,9 @@ from django.contrib.auth import views as auth_views
 from .charts  import  total_sales_over_time, sales_by_product, order_status_distribution
 #from vegetables.settings import ung
 from .views import vendor_dashboard_view
+from .custom_views import custom_admin_view
+from .views import AdminDashboardView
+
 urlpatterns = [
     path('vendors/add/', VendorCreateView.as_view(), name='vendor-add'),
     path('vendors/<int:pk>/edit/', VendorUpdateView.as_view(), name='vendor-edit'),
@@ -17,5 +20,6 @@ urlpatterns = [
     path('charts/total-sales/', total_sales_over_time, name='total_sales_over_time'),
     path('charts/sales-by-product/', sales_by_product, name='sales_by_product'),
     path('charts/order-status/', order_status_distribution, name='order_status_distribution'),
-
+   path('custom-page/', custom_admin_view, name='custom_page'),
+   path('admin/dashboard/', AdminDashboardView.as_view(), name='admin_dashboard'),
 ]
