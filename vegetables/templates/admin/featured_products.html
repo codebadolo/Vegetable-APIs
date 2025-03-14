@@ -1,0 +1,26 @@
+{% extends "unfold/layouts/base.html" %}
+{% block content_title %}
+<h1>Featured Products</h1>
+{% endblock %}
+{% block content %}
+<table class="table-auto w-full">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Price</th>
+      <th>Category</th>
+      <th>Image</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for product in products %}
+    <tr>
+      <td>{{ product.name }}</td>
+      <td>{{ product.price }}</td>
+      <td>{{ product.category }}</td>
+      <td><img src="{{ product.display_image.url }}" alt="{{ product.name }}" width="50"></td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

@@ -23,7 +23,7 @@ class CustomerProfileSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Customer
-        fields = ['user', 'address', 'phone']
+        fields = ['user', 'address', 'phone_number']
 
 
 class ChangePasswordSerializer(serializers.Serializer):

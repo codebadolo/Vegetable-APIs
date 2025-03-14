@@ -1,0 +1,48 @@
+{% extends "unfold/layouts/base.html" %}
+{% load i18n static unfold %}
+
+{% block content_title %}
+    <div class="flex items-center justify-between">
+        <div>
+            <h1 class="text-2xl font-bold text-gray-900 dark:text-white">
+                Add Product
+            </h1>
+        </div>
+    </div>
+{% endblock %}
+
+{% block content %}
+    <div class="py-6">
+        <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                <div class="p-6 bg-white border-b border-gray-200">
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        {{ form.as_p }}
+
+                        {% for inline in inlines %}
+                            <h2>{{ inline.opts.verbose_name_plural|title }}</h2>
+                            {{ inline.media }}
+                            {{ inline.formset.management_form }}
+                            {% for inln_form in inline.formset.forms %}
+                                <div class="form-row">
+                                    {% for hidden in inln_form.hidden_fields %}
+                                        {{ hidden }}
+                                    {% endfor %}
+                                    {% for field in inln_form.visible_fields %}
+                                        <div class="fieldWrapper">
+                                            {{ field.errors }}
+                                            {{ field.label_tag }} {{ field }}
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            {% endfor %}
+                        {% endfor %}
+
+                        <button type="submit" class="btn btn-primary">Save</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

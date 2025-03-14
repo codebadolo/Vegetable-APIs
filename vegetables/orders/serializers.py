@@ -11,12 +11,12 @@ class OrderSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Order
-        fields = ['id', 'customer', 'vendor', 'total_price', 'status', 'items']
+        fields = ['id', 'customer', 'gestionnaire', 'total_price', 'status', 'items']
 
 class CustomerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Customer
-        fields = ['user', 'address', 'phone']
+        fields = ['user', 'address']
 
 class CardSerializer(serializers.ModelSerializer):
     class Meta:

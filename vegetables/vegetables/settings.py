@@ -41,7 +41,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+     'drf_yasg',
     'rest_framework',
+     "corsheaders",
     'customers',
     'vendors',
     'product',
@@ -52,8 +54,10 @@ INSTALLED_APPS = [
 
 ]
 
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+     "corsheaders.middleware.CorsMiddleware",
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -63,7 +67,7 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'vegetables.urls'
-
+CORS_ALLOW_ALL_ORIGINS = True
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -94,6 +98,11 @@ DATABASES = {
     }
 }
 
+
+SWAGGER_SETTINGS = {
+
+    'VALIDATOR_URL': 'http://localhost:8000',
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
@@ -160,24 +169,28 @@ from django.templatetags.static import static
 from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
 
+from django.templatetags.static import static
+from django.urls import reverse_lazy
+from django.utils.translation import gettext_lazy as _
+
 UNFOLD = {
-    "SITE_TITLE": "Symbiose Yaar Admin",
-    "SITE_HEADER": "Symbiose Yaar",
+    "SITE_TITLE": "KULTURA Admin",
+    "SITE_HEADER": "KULTURA",
     "SITE_URL": "/",
-    "SITE_ICON": lambda request: static("/LOGO-SYMBIOSE-YAAR_1.png"),
-    "SITE_FAVICONS": [
+    #"SITE_ICON": lambda request: static("/LOGO-SYMBIOSE-YAAR_1.png"),
+    '''  "SITE_FAVICONS": [
         {
             "rel": "icon",
             "sizes": "32x32",
             "type": "image/png",
             "href": lambda request: static("/LOGO-SYMBIOSE-YAAR_1.png"),
         },
-    ],
-    "SITE_LOGO": {
-        "sizes": "32x32",
-        "light": lambda request: static("/LOGO-SYMBIOSE-YAAR_1.png"),
-        "dark": lambda request: static("/LOGO-SYMBIOSE-YAAR_1.png"),
-    },
+    ],'''
+    #"SITE_LOGO": {
+       # "sizes": "32x32",
+       # "light": lambda request: static("/LOGO-SYMBIOSE-YAAR_1.png"),
+       # "dark": lambda request: static("/LOGO-SYMBIOSE-YAAR_1.png"),
+    #},
     "SHOW_HISTORY": True,
     "SHOW_VIEW_ON_SITE": True,
     "THEME": "light",
@@ -224,19 +237,7 @@ UNFOLD = {
         "show_search": True,
         "show_all_applications": False,
         "navigation": [
-           {
-                "title": "Custom Pages",
-                "separator": True,
-                "collapsible": True,
-                "items": [
-                    {
-                        "title": "Custom Admin Page",
-                        "icon": "dashboard",
-                       "link": reverse_lazy("admin_dashboard"),
-                        "permission": lambda request: request.user.is_superuser,
-                    },
-                ],
-            },
+          
             {
                 "title": _("Admin Management"),
                 "separator": True,
@@ -299,16 +300,11 @@ UNFOLD = {
                 ],
             },
             {
-                "title": _("Vendor Management"),
+                "title": _("Gestionnaire Admin"),
                 "separator": True,
                 "collapsible": False,
                 "items": [
-                    {
-                        "title": _("DashBoard"),
-                        "icon": "dashboard",
-                        "link": reverse_lazy('vendor_dashboard'),
-                        "permission": lambda request: request.user.groups.filter(name="Vendor").exists(),
-                    },
+                
                     {
                         "title": _("My Products"),
                         "icon": "inventory",
@@ -358,7 +354,42 @@ UNFOLD = {
                         "permission": lambda request: request.user.groups.filter(name="Vendor").exists(),
                     },
                 ],
-            },
+            }
         ],
     },
 }
+
+
+X_FRAME_OPTIONS = 'SAMEORIGIN'
+
+
+'''
+     {
+                        "title": "Featured Products",
+                        "icon": "star",
+                        "link": reverse_lazy("admin:product_product_featured_products"),
+                        "permission": lambda request: request.user.is_superuser,
+                    },
+                    {
+                        "title": "Out-of-Stock Products",
+                        "icon": "warning",
+                        "link": reverse_lazy("admin:product_product_out_of_stock_products"),
+                        "permission": lambda request: request.user.is_superuser,
+                    },'''
+                    
+                    
+                    
+''' {
+                "title": "Custom Pages",
+                "separator": True,
+                "collapsible": True,
+                "items": [
+                    {
+                        "title": "Product List",
+                        "icon": "inventory",
+                        "link": reverse_lazy("admin:product_product_tools"),
+                        "permission": lambda request: request.user.is_superuser,
+                    },
+                 
+                ],
+            },                    '''

@@ -1,10 +1,10 @@
 from rest_framework import serializers
-from .models import Vendor
+from .models import Gestionnaire
 
-class VendorSerializer(serializers.ModelSerializer):
+class GestionnaireSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Vendor
-        fields = ['id', 'store_name', 'description', 'phone_number', 'address', 'image', 'email', 'user']
+        model = Gestionnaire
+        fields = ['id', 'name', 'email', 'phone_number', 'user']
 
     def validate_phone_number(self, value):
         if len(value) < 10:
@@ -12,6 +12,6 @@ class VendorSerializer(serializers.ModelSerializer):
         return value
 
     def validate_email(self, value):
-        if Vendor.objects.filter(email=value).exists():
+        if Gestionnaire.objects.filter(email=value).exists():
             raise serializers.ValidationError("This email is already in use.")
         return value

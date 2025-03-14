@@ -1,58 +1,46 @@
 from django.contrib import admin
-from .models import Vendor 
+from .models import Gestionnaire
 from product.models import Product
-from unfold.admin import ModelAdmin
-from django.contrib.admin import AdminSite
+from unfold.admin import ModelAdmin, TabularInline
 from django.contrib.auth.models import Group
 
-from unfold.admin import TabularInline
-from product.admin import  ProductImageInline , ProductVariantInline
-'''class VendorAdminSite(AdminSite):
-    site_header = 'Vendor Dashboard'
-    site_title = 'Vendor Portal'
+class GestionnaireAdminSite(admin.AdminSite):
+    site_header = 'Gestionnaire Dashboard'
+    site_title = 'Employee Portal'
 
     def has_permission(self, request):
-        return request.user.is_active and request.user.groups.filter(name='Vendor').exists()
+        return request.user.is_active and hasattr(request.user, 'gestionnaire')
 
-vendor_admin_site = VendorAdminSite(name='vendor_admin')
-'''
-# Inline display of products under each vendor
+gestionnaire_admin_site = GestionnaireAdminSite(name='gestionnaire_admin')
+
 class ProductInline(TabularInline):
     model = Product
-    extra = 0  # Don't show extra empty forms
-    fields = ('name', 'price', 'stock', 'category' )
-    readonly_fields = ('name', 'price', 'stock', 'category')
-    inlines = [ProductImageInline, ProductVariantInline]
+    extra = 0
+    fields = ('name', 'price', 'category')
+    readonly_fields = ('name', 'price', 'category')
     
     def get_queryset(self, request):
         qs = super().get_queryset(request)
-        if request.user.groups.filter(name='Vendor').exists():
-            return qs.filter(vendor__user=request.user)
+        if hasattr(request.user, 'gestionnaire'):
+            return qs.filter(gestionnaire=request.user.gestionnaire)
         return qs
 
-    def save_model(self, request, obj, form, change):
+class GestionnaireAdmin(ModelAdmin):
+    list_display = ('name', 'email', 'phone_number', 'product_count')
+    search_fields = ('name', 'email')
+    inlines = [ProductInline]
+    
+    def product_count(self, obj):
+        return obj.product_set.count()
+    product_count.short_description = 'Managed Products'
+
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
         if not request.user.is_superuser:
-            try:
-                vendor = Vendor.objects.get(user=request.user)
-                obj.vendor = vendor
-            except Vendor.DoesNotExist:
-                raise ValidationError("You are not associated with any vendor account.")
-        super().save_model(request, obj, form, change)
-   
+            return qs.filter(user=request.user)
+        return qs
 
-class VendorAdmin(ModelAdmin):
-    list_display = ('store_name', 'email', 'phone_number', 'address')
-    search_fields = ('store_name', 'email')
-    inlines = [ProductInline ]
-    
-    
-
-
-
-admin.site.register(Vendor, VendorAdmin)
-
-# ve
-
-
-
-
+# Register with both main admin and gestionnaire admin
+admin.site.register(Gestionnaire, GestionnaireAdmin)
+gestionnaire_admin_site.register(Gestionnaire, GestionnaireAdmin)
+gestionnaire_admin_site.register(Group)  # If needed for permissions
