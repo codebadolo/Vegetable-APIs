@@ -56,12 +56,13 @@ INSTALLED_APPS = [
 
 
 MIDDLEWARE = [
+      'django.middleware.csrf.CsrfViewMiddleware',
       "corsheaders.middleware.CorsMiddleware",
     'django.middleware.security.SecurityMiddleware',
-   
+  
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
+  
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -75,7 +76,9 @@ CORS_ALLOWED_ORIGINS = [
 ]
 CORS_ALLOW_ALL_ORIGINS = True
 
-
+CSRF_TRUSTED_ORIGINS = [
+     "http://localhost:3000",
+]
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -95,6 +98,13 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'kultura.wsgi.application'
 
+# settings.py
+
+ACCOUNT_AUTHENTICATION_METHOD = 'email'
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_USERNAME_REQUIRED = False
+USERNAME_FIELD = 'email'
+AUTH_USER_MODEL = 'auth.User'  # or your custom user model
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
@@ -175,14 +185,13 @@ REST_FRAMEWORK = {
     ],
 }
 
-
+CSRF_COOKIE_SECURE = True
+CSRF_COOKIE_HTTPONLY = True
 from django.templatetags.static import static
 from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
 
-from django.templatetags.static import static
-from django.urls import reverse_lazy
-from django.utils.translation import gettext_lazy as _
+
 
 UNFOLD = {
     "SITE_TITLE": "KULTURA Admin",
