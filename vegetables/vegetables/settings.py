@@ -56,8 +56,9 @@ INSTALLED_APPS = [
 
 
 MIDDLEWARE = [
+      "corsheaders.middleware.CorsMiddleware",
     'django.middleware.security.SecurityMiddleware',
-     "corsheaders.middleware.CorsMiddleware",
+   
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -67,7 +68,12 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'vegetables.urls'
-CORS_ALLOW_ALL_ORIGINS = True
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",  # Your React app's origin
+    "http://localhost:8000",  # Your Django app's origin
+]
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',

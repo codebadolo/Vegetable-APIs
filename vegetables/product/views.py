@@ -69,9 +69,10 @@ from rest_framework.response import Response
 from rest_framework import filters
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import pagination
+from rest_framework.permissions import AllowAny
 from .models import ProductType, Category, Product
+from rest_framework.views import APIView
 from .serializers import ProductTypeSerializer, CategorySerializer, ProductSerializer
-
 class CustomPagination(pagination.PageNumberPagination):
     page_size = 12  # Number of items per page
     page_size_query_param = 'page_size'
@@ -80,19 +81,38 @@ class CustomPagination(pagination.PageNumberPagination):
 class ProductTypeViewSet(viewsets.ModelViewSet):
     queryset = ProductType.objects.all()
     serializer_class = ProductTypeSerializer
+    # Remove or comment out any permission_classes here
+    # permission_classes = [IsAuthenticated]
 
 class CategoryViewSet(viewsets.ModelViewSet):
+    ermission_classes = [AllowAny] 
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
 
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        return queryset.prefetch_related('children')
+
+class SubCategoriesView(APIView):
+    def get(self, request, category_id):
+        try:
+            category = Category.objects.get(id=category_id)
+            subcategories = category.get_children()  # Fetch subcategories
+            return Response([{'id': subcategory.id, 'name': subcategory.name} for subcategory in subcategories])
+        except Category.DoesNotExist:
+            return Response({'error': 'Category not found'}, status=404)
 class ProductViewSet(viewsets.ModelViewSet):
+    permission_classes = [AllowAny] 
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
-    filterset_fields = ['category', 'product_type']  # Enable filtering by category and product_type
+    filterset_fields = ['category__name']  # Enable filtering by category and product_type
     search_fields = ['name', 'description']  # Enable search by name and description
     ordering_fields = ['price', 'name']  # Enable ordering by price and name
     pagination_class = CustomPagination
+     # Allow anyone to access this endpoint
+    # Remove or comment out any permission_classes here
+    # permission_classes = [IsAuthenticated]
 
     @action(detail=False, methods=['GET'])
     def featured(self, request):
