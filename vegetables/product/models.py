@@ -4,6 +4,7 @@ from mptt.models import MPTTModel, TreeForeignKey
 from django.utils.text import slugify
 from django.dispatch import receiver
 from django.db.models.signals import pre_save
+from django.conf import settings
 # Product Type Model
 class ProductType(models.Model):
     name = models.CharField(max_length=100)  # Product type (e.g., Electronics, Clothing)

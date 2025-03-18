@@ -9,7 +9,7 @@ from django.views.generic import TemplateView
 from django.contrib.admin.views.decorators import staff_member_required
 from django.utils.decorators import method_decorator
 from unfold.views import UnfoldModelAdminViewMixin
-
+from .filters import ProductFilter
 from django.urls import reverse
 from django.views.generic import TemplateView
 from django.contrib.admin.views.decorators import staff_member_required
@@ -79,37 +79,47 @@ class CustomPagination(pagination.PageNumberPagination):
     max_page_size = 100
 
 class ProductTypeViewSet(viewsets.ModelViewSet):
+    permission_classes = [AllowAny] 
     queryset = ProductType.objects.all()
     serializer_class = ProductTypeSerializer
     # Remove or comment out any permission_classes here
     # permission_classes = [IsAuthenticated]
 
 class CategoryViewSet(viewsets.ModelViewSet):
-    ermission_classes = [AllowAny] 
-    queryset = Category.objects.all()
+    permission_classes = [AllowAny] 
+    queryset = Category.objects.all().prefetch_related('children')
     serializer_class = CategorySerializer
 
-    def get_queryset(self):
-        queryset = super().get_queryset()
-        return queryset.prefetch_related('children')
-
-class SubCategoriesView(APIView):
-    def get(self, request, category_id):
+class SubCategoriesView(viewsets.ViewSet):
+    permission_classes = [AllowAny] 
+    def list(self, request, category_id=None):
         try:
             category = Category.objects.get(id=category_id)
-            subcategories = category.get_children()  # Fetch subcategories
-            return Response([{'id': subcategory.id, 'name': subcategory.name} for subcategory in subcategories])
+            subcategories = category.get_children()
+            return Response([{"id": sub.id, "name": sub.name} for sub in subcategories])
+        except Category.DoesNotExist:
+            return Response({"error": "Category not found"}, status=404)
+#http://localhost:8000/api/category-products/2/        
+class CategoryProductsViewSet(viewsets.ViewSet):
+    permission_classes = [AllowAny] 
+    def list(self, request, category_id=None):
+        try:
+            category = Category.objects.get(id=category_id)
+            products = Product.objects.filter(category=category)
+            serializer = ProductSerializer(products, many=True)
+            return Response(serializer.data)
         except Category.DoesNotExist:
             return Response({'error': 'Category not found'}, status=404)
 class ProductViewSet(viewsets.ModelViewSet):
     permission_classes = [AllowAny] 
-    queryset = Product.objects.all()
+    queryset = Product.objects.select_related('category')
     serializer_class = ProductSerializer
-    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
-    filterset_fields = ['category__name']  # Enable filtering by category and product_type
-    search_fields = ['name', 'description']  # Enable search by name and description
-    ordering_fields = ['price', 'name']  # Enable ordering by price and name
-    pagination_class = CustomPagination
+    filterset_class = ProductFilter
+    #filter_backends = [DjangoFilterBackend]
+    filterset_fields = {
+        'category__slug': ['exact'],
+        'price': ['gte', 'lte'],
+    }
      # Allow anyone to access this endpoint
     # Remove or comment out any permission_classes here
     # permission_classes = [IsAuthenticated]
@@ -132,3 +142,23 @@ class ProductViewSet(viewsets.ModelViewSet):
         related_products = Product.objects.filter(category=product.category).exclude(pk=product.pk)[:4]  # Example
         serializer = self.get_serializer(related_products, many=True)
         return Response(serializer.data)
+    
+    @action(detail=True, methods=['get'])
+    def product_detail(self, request, slug=None):  #Removed `pk=None`, using slug
+        """
+        Custom action to retrieve product details by slug.
+        """
+        permission_classes = [AllowAny]
+        product = self.get_object()  # This now uses the lookup_field ('slug')
+        serializer = ProductPageSerializer(product)
+        return Response(serializer.data)
+    
+    
+    
+from .serializers import ProductPageSerializer
+from rest_framework import generics
+class ProductPageView(generics.RetrieveAPIView):
+    permission_classes = [AllowAny]
+    queryset = Product.objects.all()
+    serializer_class = ProductPageSerializer
+    lookup_field = 'slug'  # Use slug instead of pk    
