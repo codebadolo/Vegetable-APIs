@@ -1,11 +1,13 @@
 from django.contrib import admin
-from .models import Customer, Order, OrderItem, Card, Coupon, Transaction, Wishlist, Promotion
+from .models import Customer, Order, OrderItem, Card, Coupon, Transaction, Wishlist, Promotion , Cart , CartItem
 from unfold.admin import ModelAdmin, TabularInline
 from vendors.models import Gestionnaire
 from django.utils.html import format_html
 from django.core.exceptions import PermissionDenied
 
 # Customer Admin
+admin.site.register(Cart)
+admin.site.register(CartItem)
 class CustomerAdmin(ModelAdmin):
     list_display = ('user', 'phone_number', 'address')
 
@@ -14,8 +16,7 @@ class CustomerAdmin(ModelAdmin):
         if request.user.groups.filter(name="Gestionnaire").exists():
             return qs.filter(order__gestionnaire=request.user.gestionnaire).distinct()
         return qs
-
-admin.site.register(Customer, CustomerAdmin)
+admin.site.register(Customer)
 
 class OrderItemInline(TabularInline):
     model = OrderItem

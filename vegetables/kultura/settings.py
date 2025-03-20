@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/5.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
-
+from datetime import timedelta, datetime
 from pathlib import Path
 import os 
 
@@ -41,28 +41,29 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-     'drf_yasg',
+    'drf_yasg',
     'rest_framework',
-     "corsheaders",
-    'customers',
+    "corsheaders",
+    'rest_framework.authtoken',
+    'djoser',
+    'rest_framework_simplejwt',
+    'customers',  # Use the correct AppConfig name
     'vendors',
     'product',
     'orders',
-    'rest_framework.authtoken',
-    
+    'django_extensions',
+   
 
 
 ]
 
 
 MIDDLEWARE = [
-      'django.middleware.csrf.CsrfViewMiddleware',
-      "corsheaders.middleware.CorsMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
+    'django.middleware.csrf.CsrfViewMiddleware',
     'django.middleware.security.SecurityMiddleware',
-  
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-  
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -70,15 +71,15 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'kultura.urls'
 
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",  # Your React app's origin
-    "http://localhost:8000",  # Your Django app's origin
-]
-CORS_ALLOW_ALL_ORIGINS = True
+CSRF_TRUSTED_ORIGINS = ["http://localhost:3000" , "http://127.0.0.1:8000" ]  # React frontend URL
+CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOWED_ORIGINS = ["http://localhost:3000" , "http://localhost:8000" ]
 
-CSRF_TRUSTED_ORIGINS = [
-     "http://localhost:3000",
-]
+GRAPH_MODELS ={
+    'all_applications': True,
+    'graph_models': True,
+     }
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -96,15 +97,22 @@ TEMPLATES = [
 ]
 
 
+
 WSGI_APPLICATION = 'kultura.wsgi.application'
 
 # settings.py
 
-ACCOUNT_AUTHENTICATION_METHOD = 'email'
-ACCOUNT_EMAIL_REQUIRED = True
-ACCOUNT_USERNAME_REQUIRED = False
-USERNAME_FIELD = 'email'
-AUTH_USER_MODEL = 'auth.User'  # or your custom user model
+#ACCOUNT_AUTHENTICATION_METHOD = 'email'
+#ACCOUNT_EMAIL_REQUIRED = True
+#ACCOUNT_USERNAME_REQUIRED = False
+#USERNAME_FIELD = 'email'
+
+AUTH_USER_MODEL = 'customers.CustomUser'  # Ensure you are using a custom user model if you've defined one
+
+AUTHENTICATION_BACKENDS = [
+   # 'customers.auth_backends.EmailAuthBackend',
+    'django.contrib.auth.backends.ModelBackend',
+]
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
@@ -166,27 +174,45 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 MEDIA_URL = '/'
 MEDIA_ROOT = BASE_DIR / ''
 
-AUTHENTICATION_BACKENDS = [
-    'django.contrib.auth.backends.ModelBackend',  # Default authentication backend
-]
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
-
+CSRF_COOKIE_SECURE = True
+CSRF_COOKIE_HTTPONLY = True
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+SESSION_COOKIE_HTTPONLY=True 
+ 
+
+# In your settings.py
+'''REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
+}'''
 
 REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.AllowAny',  # Allow login without authentication
+    ],
+}
+'''REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+    ],
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',
     ],
-    'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.SessionAuthentication',
-        'rest_framework.authentication.TokenAuthentication',
-    ],
-}
+}'''
 
-CSRF_COOKIE_SECURE = True
-CSRF_COOKIE_HTTPONLY = True
+'''SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=30),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=7),
+}'''
+
 from django.templatetags.static import static
 from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
@@ -290,7 +316,7 @@ UNFOLD = {
                     {
                         "title": _("Users"),
                         "icon": "people",
-                        "link": reverse_lazy("admin:auth_user_changelist"),
+                        "link": reverse_lazy("admin:customers_customuser_changelist"),
                         "permission": lambda request: request.user.is_superuser,  # Admin only
                     },
                 ],

@@ -2,18 +2,14 @@ from django.db import models
 from django.contrib.auth.models import User
 from product.models import Product
 from django.utils import timezone
+from django.conf import settings
+from customers.models import CustomUser
+from django.contrib.auth import get_user_model
 
-class Gestionnaire(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    name = models.CharField(max_length=100)
-    email = models.EmailField(max_length=100, unique=True)
-    phone_number = models.CharField(max_length=15, blank=True, null=True)
-
-    def __str__(self):
-        return self.name
+from vendors.models import Gestionnaire  # Import Vendor from the vendor app
 
 class Customer(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     phone_number = models.CharField(max_length=15)
     address = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
@@ -69,7 +65,7 @@ class Card(models.Model):
         return f"Card ending {self.card_number[-4:]} for {self.customer.user.username}"
 
 class Wishlist(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE )
     products = models.ManyToManyField(Product)
 
     def __str__(self):
@@ -109,3 +105,12 @@ def complete_payment(order, transaction_id, amount):
     )
     order.status = 'shipped'  # Update status to shipped after payment completion
     order.save()
+
+
+class Cart(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE )
+
+class CartItem(models.Model):
+    cart = models.ForeignKey(Cart, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    quantity = models.PositiveIntegerField(default=1)
