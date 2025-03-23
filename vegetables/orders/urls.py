@@ -1,9 +1,13 @@
 from django.urls import path
-from .views import OrderListView, OrderDetailView, WishlistView, CouponListView
+
 from . import views
 urlpatterns = [
-    path('orders/', OrderListView.as_view(), name='order-list'),
-    path('orders/<int:pk>/', OrderDetailView.as_view(), name='order-detail'),
-   path('add-to-cart/', views.AddToCartView.as_view(), name='add-to-cart'),
-    path('wishlist/', views.AddToWishlistView.as_view(), name='add-to-wishlist'),
+    path('cart/add/', views.AddToCartView.as_view(), name='add_to_cart'),
+    path('wishlist/add/', views.AddToWishlistView.as_view(), name='add_to_wishlist'),
+     path('cart/', views.CartView.as_view(), name='cart'),
+    path('wishlist/', views.WishlistView.as_view(), name='wishlist'),
+     path('wishlist/remove/', views.RemoveFromWishlistView.as_view(), name='remove_from_wishlist'),
+       path('cart/remove/', views.RemoveFromCartView.as_view(), name='remove_from_cart'),
+           path('cart/update/', views.UpdateCartItemView.as_view(), name='update_cart_item'),
+           path('complete/', views.CompleteOrderView.as_view(), name='complete_order'),
 ]

@@ -44,7 +44,7 @@ class ProductAdmin(ModelAdmin):
 
     fieldsets = (
         ('Name  & History', {
-            'fields': ('name', 'description', 'gestionnaire' , 'history')
+            'fields': ('name', 'description', 'gestionnaire' , 'history' ,'featured')
         }),
            
 
@@ -52,6 +52,7 @@ class ProductAdmin(ModelAdmin):
         ('Pricing & Categorization', {
             'fields': ('price', 'category', 'product_type')
         }),
+    
    
      
     )

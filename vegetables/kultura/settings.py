@@ -26,6 +26,7 @@ SECRET_KEY = 'django-insecure-5pi8i@uv9+#ut-0%(b^ot^*zte)j#*+!0tqmm#qbg2m@xtu1$+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+
 ALLOWED_HOSTS = ['*' , 'https://badolo.pythonanywhere.com/']
 
 
@@ -51,6 +52,7 @@ INSTALLED_APPS = [
     'vendors',
     'product',
     'orders',
+    'home',
     'django_extensions',
    
 
@@ -439,3 +441,36 @@ X_FRAME_OPTIONS = 'SAMEORIGIN'
                  
                 ],
             },                    '''
+            
+            
+ # settings.py
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '{levelname} {asctime} {module} {process:d} {thread:d} {message}',
+            'style': '{',
+        },
+        'simple': {
+            'format': '{levelname} {message}',
+            'style': '{',
+        },
+    },
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'simple'
+        },
+        'file': {
+            'class': 'logging.FileHandler',
+            'filename': 'logs/kultura.log',
+            'formatter': 'verbose'
+        },
+    },
+    'root': {
+        'handlers': ['console', 'file'],
+        'level': 'INFO',
+    },
+}

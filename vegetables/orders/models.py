@@ -65,8 +65,9 @@ class Card(models.Model):
         return f"Card ending {self.card_number[-4:]} for {self.customer.user.username}"
 
 class Wishlist(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE )
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True)
     products = models.ManyToManyField(Product)
+
 
     def __str__(self):
         return f"{self.user.username}'s Wishlist"
@@ -74,9 +75,13 @@ class Wishlist(models.Model):
 class Promotion(models.Model):
     name = models.CharField(max_length=255, default="Default Name")
     discount_percentage = models.DecimalField(max_digits=5, decimal_places=2)
+    description = models.TextField(blank=True, null=True)
     start_date = models.DateField()
+    image = models.ImageField(upload_to='promotions/', blank=True, null=True)  
     end_date = models.DateField()
+    is_hero = models.BooleanField(default=False)
     active = models.BooleanField(default=True)
+    link = models.URLField(blank=True, null=True)  # URL field for promotions
 
     def __str__(self):
         return self.name
@@ -90,10 +95,12 @@ class Promotion(models.Model):
 class Transaction(models.Model):
     order = models.OneToOneField(Order, on_delete=models.CASCADE)
     transaction_id = models.CharField(max_length=100, unique=True)
+    
     payment_method = models.CharField(max_length=20, choices=[('card', 'Card'), ('paypal', 'Paypal')])
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     status = models.CharField(max_length=20, choices=[('pending', 'Pending'), ('completed', 'Completed')])
     created_at = models.DateTimeField(auto_now_add=True)
+    
 
 def complete_payment(order, transaction_id, amount):
     Transaction.objects.create(
@@ -108,7 +115,7 @@ def complete_payment(order, transaction_id, amount):
 
 
 class Cart(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE )
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE  )
 
 class CartItem(models.Model):
     cart = models.ForeignKey(Cart, on_delete=models.CASCADE)

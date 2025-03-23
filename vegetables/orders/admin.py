@@ -160,5 +160,11 @@ class PromotionAdmin(ModelAdmin):
     list_display = ('name', 'discount_percentage', 'start_date', 'end_date', 'active')
     list_filter = ('active', 'start_date', 'end_date')
     search_fields = ('name',)
+    fieldsets = (
+        ('promotion creations', {
+            'fields': ('name', 'discount_percentage', 'start_date', 'end_date', 'active' ,'link' , 'is_hero' ,'image')
+        }),
+       
+    ) 
 
 admin.site.register(Promotion, PromotionAdmin)

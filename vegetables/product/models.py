@@ -6,6 +6,9 @@ from django.dispatch import receiver
 from django.db.models.signals import pre_save
 from django.conf import settings
 from django.db import models
+from django.db import models
+from django.utils.text import slugify
+
 from django.utils.text import slugify
 # Product Type Model
 class ProductType(models.Model):
@@ -20,17 +23,13 @@ class Category(MPTTModel):
     name = models.CharField(max_length=100)
     parent = TreeForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, related_name='children')
     image = models.ImageField(upload_to='categories/', blank=True, null=True) 
+    featured = models.BooleanField(default=False) # Add this field
     class MPTTMeta:
         order_insertion_by = ['name']
 
     def __str__(self):
         return self.name
 
-# Product Specification Model
-
-# Product Model
-from django.db import models
-from django.utils.text import slugify
 
 class Product(models.Model):
     name = models.CharField(max_length=100)
@@ -47,6 +46,7 @@ class Product(models.Model):
         default=1  # Set a default value here
     )
     product_type = models.ForeignKey('ProductType', on_delete=models.SET_NULL, null=True, blank=True)
+    featured = models.BooleanField(default=False) # Add this field
 
     def save(self, *args, **kwargs):
         if not self.slug:
